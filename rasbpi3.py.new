@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import RPi.GPIO as GPIO
+import urllib2
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="db_user",
+  password="Passw0rd",
+  database="test"
+)
+
+mycursor = mydb.cursor()
+
+mycursor.execute("SELECT current_state FROM status where button='3'")
+
+myresult = mycursor.fetchone()
+
+for x in myresult:
+  status=x
+
+mydb.close()
+
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(16,GPIO.OUT)
+#response = urllib2.urlopen('http://192.168.0.177/buttonStatus1.php')
+#status = response.read()
+print status
+if status=='ON':
+  GPIO.output(16,False)
+elif status=='OFF':
+  GPIO.output(16,True)
+
